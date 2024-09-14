@@ -2,7 +2,7 @@
 #
 # This class creates nodes for a binary search tree.
 class Node
-  attr_reader :data, :left, :right
+  attr_accessor :data, :left, :right
 
   include Comparable
 

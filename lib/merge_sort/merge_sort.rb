@@ -11,7 +11,13 @@ def merge_sort(arr)
 
   # merge the sorted halves
   merged_arr = []
-  merged_arr << left[0] <= right[0] ? left.shift : right.shift until left.empty? || right.empty?
+  length.times do
+    break merged_arr += right if left.empty?
+    break merged_arr += left if right.empty?
 
-  left + merged_arr + right
+    next merged_arr << left.shift if left[0] <= right[0]
+    next merged_arr << right.shift if left[0] >= right[0]
+  end
+
+  merged_arr
 end

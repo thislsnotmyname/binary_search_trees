@@ -28,6 +28,16 @@ class Tree
     )
   end
 
+  def insert(value, root = @root)
+    return value if root.data == value
+    # base case: if the "root" is a leaf node
+    return root.send(value < root.data ? :left= : :right=, Node.new(value)) unless root.left || root.right
+
+    return insert(value, root.left) if value < root.data
+
+    insert(value, root.right) if value >= root.data
+  end
+
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
