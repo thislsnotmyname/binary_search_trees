@@ -7,13 +7,16 @@ tree.pretty_print
 
 puts ''
 
-puts "Insert #{tree.insert(((1..100).to_a - arr).sample)}"
+inserted = ((1..100).to_a - arr).sample
+
+puts "Insert #{tree.insert(inserted)}:"
 
 tree.pretty_print
 
 puts ''
 
-puts 'Remove 50:'
-tree.remove(50)
+remove = (arr << inserted).sample
+
+puts "Remove #{tree.remove(remove)}:"
 
 tree.pretty_print

@@ -30,17 +30,44 @@ class Tree
 
   def insert(value, root = @root)
     return value if root.data == value
+
     # base case: if the "root" is a leaf node
-    return root.send(value < root.data ? :left= : :right=, Node.new(value)) unless root.left || root.right
+    return root.send(value < root.data ? :left= : :right=, Node.new(value)) if root.left.nil? || root.right.nil?
 
-    return insert(value, root.left) if value < root.data
+    insert(value, root.left) if value < root.data
+    insert(value, root.right) if value > root.data
+  end
 
-    insert(value, root.right) if value >= root.data
+  def remove(value, root = @root, parent_node = nil, parent_connection = nil)
+    # require 'pry'
+    # binding.pry
+
+    return remove(value, root.left, root, :left=) if value < root.data
+    return remove(value, root.right, root, :right=) if value > root.data
+
+    if root.left.nil? || root.right.nil?
+      parent_node.send(parent_connection, root.left || root.right)
+      return value
+    end
+
+    new_value = find_next_biggest_value(root)
+    remove(new_value)
+    root.data = new_value
+
+    value
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
     pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
+  end
+
+  private
+
+  def find_next_biggest_value(root)
+    root = root.right
+    root = root.left until root.left.nil?
+    root.data
   end
 end
