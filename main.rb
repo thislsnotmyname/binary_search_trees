@@ -25,8 +25,36 @@ tree.pretty_print
 
 find = arr.sample
 
-puts "Find #{find}: #{tree.find(find).inspect}"
+puts "Find #{find}: #{tree.find(find)}"
 
-# p tree.level_order
+print 'Level order: '
+p tree.level_order
 
-p(tree.postorder { |node| puts node })
+print 'Preorder: '
+p tree.preorder
+
+print 'Postorder: '
+p tree.postorder
+
+print 'Inorder: '
+p tree.inorder
+
+puts "Height of root: #{tree.height(tree.root)}"
+
+puts "Depth of #{tree.level_order.last}: #{tree.depth(tree.find(tree.level_order.last))}"
+puts "Depth of #{tree.root.right}: #{tree.depth(tree.root.right)}"
+
+puts 'Unbalance!'
+
+3.times { tree.insert(rand(101..150)) }
+
+tree.pretty_print
+
+puts "Balanced? #{tree.balanced?}"
+
+puts 'Rebalance!'
+tree.rebalance
+
+tree.pretty_print
+
+puts "Balanced? #{tree.balanced?}"

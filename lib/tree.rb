@@ -21,22 +21,20 @@ class Tree
     # set root to middle of the array
     # set left node to left subtree
     # set right node to right subtree
-    Node.new(
-      array[mid],
-      build_tree(array[0...mid]),
-      build_tree(array[mid + 1..])
-    )
+    Node.new(array[mid],
+             build_tree(array[0...mid]),
+             build_tree(array[mid + 1..]))
   end
 
   def insert(value, root = @root)
-    return value if root.data == value
+    return Node.new(value) if root.nil?
 
-    # base case: if the "root" is a leaf node
-    return root.send(value < root.data ? :left= : :right=, Node.new(value)) if root.left.nil? || root.right.nil?
+    return root if root.data == value
 
-    return insert(value, root.left) if value < root.data
+    root.left = insert(value, root.left) if value < root.data
+    root.right = insert(value, root.right) if value > root.data
 
-    insert(value, root.right) if value > root.data
+    root
   end
 
   def remove(value, root = @root, parent_node = nil, parent_connection = nil)
@@ -45,15 +43,11 @@ class Tree
     return remove(value, root.left, root, :left=) if value < root.data
     return remove(value, root.right, root, :right=) if value > root.data
 
-    if root.left.nil? || root.right.nil?
+    if root.left && root.right
+      root.data = remove(find_next_biggest_value(root))
+    else
       parent_node.send(parent_connection, root.left || root.right)
-      return value
     end
-
-    new_value = find_next_biggest_value(root)
-    remove(new_value)
-    root.data = new_value
-
     value
   end
 
@@ -66,10 +60,10 @@ class Tree
     root
   end
 
-  def level_order
+  def level_order(root = @root)
     # Iterative approach
     array = []
-    queue = [@root]
+    queue = [root]
     until queue.empty?
       curr = queue[0]
       queue << curr.left if curr.left
@@ -81,6 +75,14 @@ class Tree
     array
   end
 
+  # def level_order_recursive(root = @root, arr = [])
+  #   yield(root) if block_given?
+  #   arr << root.data
+
+  #   level_order_recursive(root.left, arr)
+  #   level_order_recursive(root.right, arr)
+  # end
+
   def inorder(root = @root, arr = [], &block)
     return if root.nil?
 
@@ -88,6 +90,7 @@ class Tree
     arr << root.data
     block.call root if block_given?
     inorder(root.right, arr, &block)
+
     arr
   end
 
@@ -98,6 +101,7 @@ class Tree
     block.call root if block_given?
     inorder(root.left, arr, &block)
     inorder(root.right, arr, &block)
+
     arr
   end
 
@@ -108,7 +112,33 @@ class Tree
     inorder(root.right, arr, &block)
     arr << root.data
     block.call root if block_given?
+
     arr
+  end
+
+  def height(node)
+    return -1 if node.nil?
+
+    [height(node.left), height(node.right)].max + 1
+  end
+
+  def depth(node, root = @root)
+    return nil if root.nil?
+
+    return 0 if root == node
+
+    return depth(node, root.left) + 1 if node.data < root.data
+
+    depth(node, root.right) + 1 if node.data > root.data
+  end
+
+  def balanced?
+    level_order { |node| return false unless (height(node.left) - height(node.right)).between?(-1, 1) }
+    true
+  end
+
+  def rebalance
+    @root = build_tree(inorder(@root))
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
