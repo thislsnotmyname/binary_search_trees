@@ -1,7 +1,7 @@
 require_relative 'node'
 require_relative 'merge_sort/merge_sort'
 
-# JM, 09/12/2024
+# JM, 09/14/2024
 #
 # This class builds a Binary Search Tree based off a given array.
 class Tree
@@ -34,13 +34,13 @@ class Tree
     # base case: if the "root" is a leaf node
     return root.send(value < root.data ? :left= : :right=, Node.new(value)) if root.left.nil? || root.right.nil?
 
-    insert(value, root.left) if value < root.data
+    return insert(value, root.left) if value < root.data
+
     insert(value, root.right) if value > root.data
   end
 
   def remove(value, root = @root, parent_node = nil, parent_connection = nil)
-    # require 'pry'
-    # binding.pry
+    return if root.nil?
 
     return remove(value, root.left, root, :left=) if value < root.data
     return remove(value, root.right, root, :right=) if value > root.data
@@ -55,6 +55,60 @@ class Tree
     root.data = new_value
 
     value
+  end
+
+  def find(value, root = @root)
+    return if root.nil?
+
+    return find(value, root.left) if value < root.data
+    return find(value, root.right) if value > root.data
+
+    root
+  end
+
+  def level_order
+    # Iterative approach
+    array = []
+    queue = [@root]
+    until queue.empty?
+      curr = queue[0]
+      queue << curr.left if curr.left
+      queue << curr.right if curr.right
+      shift = queue.shift
+      yield(shift) if block_given?
+      array << shift.data
+    end
+    array
+  end
+
+  def inorder(root = @root, arr = [], &block)
+    return if root.nil?
+
+    inorder(root.left, arr, &block)
+    arr << root.data
+    block.call root if block_given?
+    inorder(root.right, arr, &block)
+    arr
+  end
+
+  def preorder(root = @root, arr = [], &block)
+    return if root.nil?
+
+    arr << root.data
+    block.call root if block_given?
+    inorder(root.left, arr, &block)
+    inorder(root.right, arr, &block)
+    arr
+  end
+
+  def postorder(root = @root, arr = [], &block)
+    return if root.nil?
+
+    inorder(root.left, arr, &block)
+    inorder(root.right, arr, &block)
+    arr << root.data
+    block.call root if block_given?
+    arr
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
