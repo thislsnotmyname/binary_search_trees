@@ -10,7 +10,8 @@ puts ''
 inserted = ((1..100).to_a - arr).sample
 arr << inserted
 
-puts "Insert #{tree.insert(inserted)}:"
+puts "Insert #{inserted}:"
+tree.insert(inserted)
 
 tree.pretty_print
 
@@ -39,10 +40,13 @@ p tree.postorder
 print 'Inorder: '
 p tree.inorder
 
+puts "Balanced? #{tree.balanced?}"
+
 puts "Height of root: #{tree.height(tree.root)}"
 
 puts "Depth of #{tree.level_order.last}: #{tree.depth(tree.find(tree.level_order.last))}"
 puts "Depth of #{tree.root.right}: #{tree.depth(tree.root.right)}"
+puts "Depth of #{tree.root}: #{tree.depth(tree.root)}"
 
 puts 'Unbalance!'
 
@@ -58,3 +62,15 @@ tree.rebalance
 tree.pretty_print
 
 puts "Balanced? #{tree.balanced?}"
+
+print 'Level order: '
+p tree.level_order
+
+print 'Preorder: '
+p tree.preorder
+
+print 'Postorder: '
+p tree.postorder
+
+print 'Inorder: '
+p tree.inorder

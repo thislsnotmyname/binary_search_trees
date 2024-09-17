@@ -38,13 +38,13 @@ class Tree
   end
 
   def remove(value, root = @root, parent_node = nil, parent_connection = nil)
-    return if root.nil?
+    return unless root
 
     return remove(value, root.left, root, :left=) if value < root.data
     return remove(value, root.right, root, :right=) if value > root.data
 
     if root.left && root.right
-      root.data = remove(find_next_biggest_value(root))
+      root.data = remove(find_next_biggest_value(root), root)
     else
       parent_node.send(parent_connection, root.left || root.right)
     end
@@ -62,26 +62,34 @@ class Tree
 
   def level_order(root = @root)
     # Iterative approach
-    array = []
     queue = [root]
+    array = []
     until queue.empty?
-      curr = queue[0]
+      curr = queue.shift
       queue << curr.left if curr.left
       queue << curr.right if curr.right
-      shift = queue.shift
-      yield(shift) if block_given?
-      array << shift.data
+      array << curr.data
+      yield(curr) if block_given?
     end
     array
   end
 
-  # def level_order_recursive(root = @root, arr = [])
-  #   yield(root) if block_given?
-  #   arr << root.data
+  def level_order_recursive(root = @root, queue = [root], arr = [], &block)
+    # Recursive approach
+    return if root.nil?
 
-  #   level_order_recursive(root.left, arr)
-  #   level_order_recursive(root.right, arr)
-  # end
+    curr = queue.shift
+    queue << curr.left if curr.left
+    queue << curr.right if curr.right
+    arr << curr.data
+
+    block.call(curr) if block_given?
+
+    level_order_recursive(root.left, queue, arr, &block)
+    level_order_recursive(root.right, queue, arr, &block)
+
+    arr
+  end
 
   def inorder(root = @root, arr = [], &block)
     return if root.nil?
@@ -123,8 +131,6 @@ class Tree
   end
 
   def depth(node, root = @root)
-    return nil if root.nil?
-
     return 0 if root == node
 
     return depth(node, root.left) + 1 if node.data < root.data
