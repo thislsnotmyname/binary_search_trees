@@ -3,7 +3,7 @@ require_relative 'lib/tree'
 arr = Array.new(14) { rand(1..100) }
 tree = Tree.new(arr)
 
-tree.pretty_print
+pp tree
 
 puts ''
 
@@ -13,7 +13,7 @@ arr << inserted
 puts "Insert #{inserted}:"
 tree.insert(inserted)
 
-tree.pretty_print
+pp tree
 
 puts ''
 
@@ -22,7 +22,7 @@ remove = arr.sample
 puts "Remove #{tree.remove(remove)}:"
 arr.delete(remove)
 
-tree.pretty_print
+pp tree
 
 find = arr.sample
 
@@ -52,14 +52,14 @@ puts 'Unbalance!'
 
 3.times { tree.insert(rand(101..150)) }
 
-tree.pretty_print
+pp tree
 
 puts "Balanced? #{tree.balanced?}"
 
 puts 'Rebalance!'
 tree.rebalance
 
-tree.pretty_print
+pp tree
 
 puts "Balanced? #{tree.balanced?}"
 

@@ -1,3 +1,4 @@
+require 'pp'
 require_relative 'node'
 require_relative 'merge_sort/merge_sort'
 
@@ -147,10 +148,10 @@ class Tree
     @root = build_tree(inorder(@root))
   end
 
-  def pretty_print(node = @root, prefix = '', is_left = true)
-    pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
-    puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
-    pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
+  def pretty_print(pp, node = @root, prefix = '', is_left = true)
+    pretty_print(pp, node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
+    pp.text "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}\n"
+    pretty_print(pp, node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
   end
 
   private
